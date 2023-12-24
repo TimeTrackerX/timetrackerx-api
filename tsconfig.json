@@ -1,0 +1,32 @@
+{
+    "include": ["src/**/*", "assets/**/*"],
+    "exclude": ["node_modules", "tests", "docker"],
+    "compilerOptions": {
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "importHelpers": true,
+        "allowSyntheticDefaultImports": true,
+        "esModuleInterop": true,
+        "strict": true,
+        "skipLibCheck": true,
+        "lib": ["ESNext"],
+        "module": "commonjs",
+        "target": "esnext",
+        "forceConsistentCasingInFileNames": true,
+        "noImplicitAny": true,
+        "moduleResolution": "node",
+        "outDir": "dist",
+        "resolveJsonModule": true,
+        "baseUrl": "src",
+        "paths": {
+            "@app/*": ["./*"],
+            "@assets/*": ["../assets/*"]
+        },
+        "types": ["bun-types"]
+    },
+    "ts-node": {
+        "require": ["tsconfig-paths/register"],
+        "transpileOnly": true,
+        "swc": true
+    }
+}
