@@ -1,21 +1,22 @@
 import { AppEntity } from '@app/database/core/AppEntity';
+import { SocialProfileEntity } from '@app/entities/SocialProfileEntity';
 import JwtService from '@app/services/JwtService';
 import { DbLogger } from '@app/utils/loggers';
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, OneToMany, Relation } from 'typeorm';
 
 @Entity('users')
 export class UserEntity extends AppEntity {
-    @Column({ nullable: false, type: 'varchar', unique: true })
-    username!: string;
+    @Column({ nullable: false, type: 'varchar', unique: false })
+    name!: string;
 
     @Column({ nullable: true, type: 'tinytext' })
-    avatar_url_prefix!: string;
+    profile_img_url!: string;
 
     @Column({ type: 'varchar', unique: true, nullable: true })
     email!: string | null;
 
-    @Column({ type: 'boolean', nullable: false, default: false })
-    verified!: boolean;
+    @OneToMany(() => SocialProfileEntity, profile => profile.user)
+    social_profiles!: Relation<SocialProfileEntity[]>;
 
     static async fromJwtToken(token: string): Promise<UserEntity | boolean> {
         try {
