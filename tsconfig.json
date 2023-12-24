@@ -10,7 +10,7 @@
         "strict": true,
         "skipLibCheck": true,
         "lib": ["ESNext"],
-        "module": "esnext",
+        "module": "commonjs",
         "target": "esnext",
         "forceConsistentCasingInFileNames": true,
         "noImplicitAny": true,
@@ -21,8 +21,7 @@
         "paths": {
             "@app/*": ["./*"],
             "@assets/*": ["../assets/*"]
-        },
-        "types": ["bun-types"]
+        }
     },
     "ts-node": {
         "require": ["tsconfig-paths/register"],

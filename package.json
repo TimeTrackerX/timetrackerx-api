@@ -1,13 +1,20 @@
 {
     "name": "timetrackerx-api",
-    "module": "index.ts",
-    "type": "module",
+    "version": "0.0.0",
+    "description": "The TimeTrackerX api",
+    "main": "dist/web-server.js",
+    "repository": "git@github.com:TimeTrackerX/timetrackerx-api.git",
+    "author": "Angel S. Moreno <angelxmoreno@gmail.com>",
+    "license": "MIT",
+    "private": false,
     "scripts": {
         "clean": "rm -rf node_modules yarn.lock && yarn install",
         "build": "tsc",
         "prebuild": "rimraf dist",
-        "start": "cross-env NODE_ENV=production TS_NODE_BASEURL=./dist node -r tsconfig-paths/register dist/index.js",
+        "start": "cross-env NODE_ENV=production TS_NODE_BASEURL=./dist node -r tsconfig-paths/register dist/web-server.js",
         "dev": "cross-env NODE_ENV=development nodemon",
+        "workers:dev": "cross-env NODE_ENV=development nodemon --exec \"ts-node src/queue-workers.ts\"",
+        "workers:start": "cross-env NODE_ENV=production TS_NODE_BASEURL=./dist node -r tsconfig-paths/register dist/queue-workers.js",
         "docker:cmd": "docker-compose -p timetrackerx-api --env-file .env --file ./docker/docker-compose.yml",
         "docker:start": "bun docker:cmd up --remove-orphans",
         "docker:stop": "bun docker:cmd stop",
@@ -36,6 +43,7 @@
         "dotenv": "^16.3.1",
         "dotenv-expand": "^10.0.0",
         "express": "^4.18.2",
+        "jsonwebtoken": "^9.0.2",
         "morgan": "^1.10.0",
         "multer": "^1.4.5-lts.1",
         "mysql2": "^3.6.5",
@@ -55,6 +63,8 @@
         "@types/compression": "^1.7.5",
         "@types/cors": "^2.8.17",
         "@types/express": "^4.17.21",
+        "@types/jsonwebtoken": "^9.0.5",
+        "@types/lodash": "^4.14.202",
         "@types/morgan": "^1.9.9",
         "@types/multer": "^1.4.11",
         "bun-types": "latest",
@@ -66,6 +76,7 @@
         "lint-staged": "^15.2.0",
         "nodemon": "^3.0.2",
         "npx": "^10.2.2",
+        "pino-pretty": "^10.3.0",
         "prettier": "^3.1.1",
         "rimraf": "^5.0.5",
         "ts-node": "^10.9.2",
@@ -80,7 +91,7 @@
             ".env"
         ],
         "ext": "ts",
-        "exec": "ts-node -r tsconfig-paths/register --transpile-only src/index.ts"
+        "exec": "ts-node -r tsconfig-paths/register --transpile-only src/web-server.ts"
     },
     "eslintConfig": {
         "root": true,

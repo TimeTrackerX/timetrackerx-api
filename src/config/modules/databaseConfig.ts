@@ -7,10 +7,9 @@ const databaseUrlString = Env.asString('DATABASE_URL');
 const databaseUrl = new URL(databaseUrlString);
 const { hostname, port, username, password, pathname } = databaseUrl;
 
-const currentDir = import.meta.dir;
-const entitiesPath = path.join(currentDir, '..', '..', 'entities', '*Entity.{js,ts}');
-const migrationsPath = path.join(currentDir, '..', '..', 'database', 'migrations', '*.{js,ts}');
-const subscribersPath = path.join(currentDir, '..', '..', 'database', 'subscribers', '*.{js,ts}');
+const entitiesPath = path.join(__dirname, '..', '..', 'entities', '*Entity.{js,ts}');
+const migrationsPath = path.join(__dirname, '..', '..', 'database', 'migrations', '*.{js,ts}');
+const subscribersPath = path.join(__dirname, '..', '..', 'database', 'subscribers', '*.{js,ts}');
 
 export const databaseConfig: MysqlConnectionOptions = {
     type: 'mariadb',
