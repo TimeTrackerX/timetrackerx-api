@@ -8,7 +8,7 @@
         "prebuild": "rimraf dist",
         "start": "cross-env NODE_ENV=production TS_NODE_BASEURL=./dist node -r tsconfig-paths/register dist/index.js",
         "dev": "cross-env NODE_ENV=development nodemon",
-        "docker:cmd": "docker-compose -p shybye-api --env-file .env --file ./docker/docker-compose.yml",
+        "docker:cmd": "docker-compose -p timetrackerx-api --env-file .env --file ./docker/docker-compose.yml",
         "docker:start": "bun docker:cmd up --remove-orphans",
         "docker:stop": "bun docker:cmd stop",
         "docker:restart": "bun docker:cmd restart",
