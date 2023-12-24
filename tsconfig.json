@@ -10,7 +10,7 @@
         "strict": true,
         "skipLibCheck": true,
         "lib": ["ESNext"],
-        "module": "commonjs",
+        "module": "esnext",
         "target": "esnext",
         "forceConsistentCasingInFileNames": true,
         "noImplicitAny": true,
