@@ -6,7 +6,7 @@ import logger from 'morgan';
 import path from 'path';
 import { createExpressServer } from 'routing-controllers';
 
-const controllersPath = path.join(__dirname, '..', 'controllers', '*Controller.{js,ts}');
+const controllersPath = path.join(__dirname, '..', 'controllers/**', '*Controller.{js,ts}');
 
 const app = createExpressServer({
     controllers: [controllersPath],
