@@ -1,8 +1,8 @@
 import 'reflect-metadata';
 import appConfig from '@app/config';
 import AuthController from '@app/controllers/AuthController';
-import { buildAuthorizeUrl } from '@app/services/google/googleOAuth2Client';
 import { Request, Response } from 'express';
+import { OAuth2Client } from 'google-auth-library';
 import { Get, JsonController, Redirect, Req, Res } from 'routing-controllers';
 
 @JsonController('/auth/google')
@@ -10,7 +10,11 @@ export class GoogleController extends AuthController {
     @Get('/')
     @Redirect(':url')
     index(@Res() res: Response) {
-        const url = buildAuthorizeUrl();
+        const oauthClient = new OAuth2Client(appConfig.auth.configs.google);
+        const url = oauthClient.generateAuthUrl({
+            access_type: 'offline',
+            scope: appConfig.auth.configs.google.scopes,
+        });
         res.redirect(url);
         return res;
     }

@@ -3,7 +3,7 @@ import { UserEntity } from '@app/entities/UserEntity';
 import { Exclude } from 'class-transformer';
 import { Column, Entity, Index, JoinColumn, ManyToOne, Relation } from 'typeorm';
 
-interface SocialProfileLookUp {
+export interface SocialProfileLookUp {
     provider: string;
     provider_uid: string;
     name: string;
