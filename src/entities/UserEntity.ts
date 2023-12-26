@@ -30,4 +30,17 @@ export class UserEntity extends AppEntity {
             return false;
         }
     }
+
+    toJwtResponse() {
+        const token = JwtService.fromUser(this);
+
+        return {
+            token,
+            user: {
+                id: this.id,
+                name: this.name,
+                profile_img_url: this.profile_img_url,
+            },
+        };
+    }
 }
