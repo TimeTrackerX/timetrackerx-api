@@ -24,7 +24,9 @@ export default class HttpValidationError extends HttpError {
             delete validationError.value;
             errors.comprehensive.push(validationError);
             if (validationError.constraints) {
-                const message = Object.values(validationError.constraints).pop();
+                const constraintMessages = Object.values(validationError.constraints);
+                const message = constraintMessages.length > 0 ? constraintMessages.pop() : 'Unknown validation error';
+
                 if (message) {
                     errors.simple.push({
                         field: validationError.property,

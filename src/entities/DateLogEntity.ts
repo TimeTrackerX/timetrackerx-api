@@ -4,7 +4,7 @@ import { ClientEntity } from '@app/entities/ClientEntity';
 import { TaskEntity } from '@app/entities/TaskEntity';
 import { TimeLogEntity } from '@app/entities/TimeLogEntity';
 import { UserEntity } from '@app/entities/UserEntity';
-import { formatDistanceStrict } from 'date-fns';
+import { formatDistanceStrict, parseISO } from 'date-fns';
 import { Column, Entity, Index, JoinColumn, ManyToOne, OneToMany, Raw, Relation, Unique } from 'typeorm';
 
 @Entity('date_logs')
@@ -79,8 +79,9 @@ export class DateLogEntity extends UserOwnedEntity {
         const totalMinutes = dateLog.time_logs
             .map(({ clock_in, clock_out }) => {
                 if (!!clock_in && !!clock_out) {
-                    const clockInDateTime = new Date(`${dateLog.date_logged} ${clock_in}`);
-                    const clockOutDateTime = new Date(`${dateLog.date_logged} ${clock_out}`);
+                    const clockInDateTime = parseISO(`${dateLog.date_logged}T${clock_in}`);
+                    const clockOutDateTime = parseISO(`${dateLog.date_logged}T${clock_out}`);
+
                     const minutesString = formatDistanceStrict(clockInDateTime, clockOutDateTime, {
                         unit: 'minute',
                         addSuffix: false,
