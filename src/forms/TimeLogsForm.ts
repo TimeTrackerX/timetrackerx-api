@@ -5,7 +5,7 @@ import { IsClientOwner } from '@app/validation/IsClientOwner';
 import { Expose, Type } from 'class-transformer';
 import { IsDate, IsDefined, IsOptional, Validate } from 'class-validator';
 
-export class TimeLog {
+export class TimeLogForm {
     @Expose()
     @IsDefined()
     @ExistsInTable(ClientEntity, 'id')

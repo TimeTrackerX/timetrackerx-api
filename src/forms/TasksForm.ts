@@ -1,7 +1,6 @@
 import { DateLogEntity } from '@app/entities/DateLogEntity';
 import { UserEntity } from '@app/entities/UserEntity';
 import { ExistsInTable } from '@app/validation/ExistsInTable';
-import { IsClientOwner } from '@app/validation/IsClientOwner';
 import { IsDateLogOwner } from '@app/validation/IsDateLogOwner';
 import { Expose } from 'class-transformer';
 import { IsDefined, IsString, Length, Validate } from 'class-validator';

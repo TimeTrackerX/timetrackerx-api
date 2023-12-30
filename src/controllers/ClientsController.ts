@@ -2,8 +2,8 @@ import { ClientEntity } from '@app/entities/ClientEntity';
 import { DateLogEntity } from '@app/entities/DateLogEntity';
 import { TimeLogEntity } from '@app/entities/TimeLogEntity';
 import { UserEntity } from '@app/entities/UserEntity';
-import { CreateClientForm, PatchClientForm } from '@app/forms/Client';
-import { TimeLog } from '@app/forms/TimeLog';
+import { CreateClientForm, PatchClientForm } from '@app/forms/ClientsForm';
+import { TimeLogForm } from '@app/forms/TimeLogsForm';
 import { RestfulHandlerInterface } from '@app/services/RestResponse/core/RestfulHandlerInterface';
 import { ClientsHandler } from '@app/services/RestResponse/handlers/ClientsHandler';
 import Validation from '@app/validation/Validation';
@@ -56,7 +56,7 @@ export class ClientsController {
     }
 
     @Post('/:id/clock')
-    async clockIn(@CurrentUser() user: UserEntity, @Param('id') id: number, @Body() payload: TimeLog) {
+    async clockIn(@CurrentUser() user: UserEntity, @Param('id') id: number, @Body() payload: TimeLogForm) {
         payload.user_id = user.id;
         payload.client_id = id;
         payload.time = payload.time || new Date();

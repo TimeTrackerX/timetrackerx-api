@@ -1,5 +1,5 @@
 import { ClientEntity } from '@app/entities/ClientEntity';
-import { CreateClientForm, PatchClientForm } from '@app/forms/Client';
+import { CreateClientForm, PatchClientForm } from '@app/forms/ClientsForm';
 import { RestfulHandlerBase } from '@app/services/RestResponse/core/RestfulHandlerBase';
 
 export class ClientsHandler extends RestfulHandlerBase<ClientEntity, CreateClientForm, PatchClientForm> {
