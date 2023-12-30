@@ -21,7 +21,7 @@ export class DateLogsController {
         const { client_id, date_logged } = params;
         return await DateLogEntity.findOne({
             where: { client_id, date_logged, user_id: user.id },
-            relations: ['client', 'time_logs'],
+            relations: ['client', 'time_logs', 'tasks'],
         });
     }
 }

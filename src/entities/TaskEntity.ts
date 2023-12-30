@@ -22,7 +22,7 @@ export class TaskEntity extends UserOwnedEntity {
         eager: false,
         createForeignKeyConstraints: false,
     })
-    @JoinColumn({ name: 'client_id' })
+    @JoinColumn({ name: 'date_log_id' })
     date_log!: Relation<ClientEntity>;
 
     @Column({ type: 'int', unsigned: true, nullable: false })
