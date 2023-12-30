@@ -1,4 +1,4 @@
-import { AppEntity } from '@app/database/core/AppEntity';
+import { UserOwnedEntity } from '@app/database/core/UserOwnedEntity';
 import { UserEntity } from '@app/entities/UserEntity';
 import { Exclude } from 'class-transformer';
 import { Column, Entity, Index, JoinColumn, ManyToOne, Relation } from 'typeorm';
@@ -16,7 +16,7 @@ export interface SocialProfileLookUp {
 @Entity('social_profiles')
 @Index('provider-uid', ['provider', 'provider_uid'], { unique: true })
 @Index('provider-email', ['provider', 'email'], { unique: true })
-export class SocialProfileEntity extends AppEntity {
+export class SocialProfileEntity extends UserOwnedEntity {
     @Column({ nullable: false, type: 'varchar' })
     @Index('provider', { unique: false })
     provider!: string;
@@ -47,9 +47,6 @@ export class SocialProfileEntity extends AppEntity {
     })
     @JoinColumn({ name: 'user_id' })
     user!: Relation<UserEntity>;
-
-    @Column({ type: 'int', unsigned: false, nullable: false })
-    user_id!: number;
 
     static async getUserFromPartial(lookup: SocialProfileLookUp): Promise<UserEntity> {
         let socialProfile = this.create(lookup);

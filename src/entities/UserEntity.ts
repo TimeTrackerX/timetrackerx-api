@@ -1,4 +1,5 @@
 import { AppEntity } from '@app/database/core/AppEntity';
+import { ClientEntity } from '@app/entities/ClientEntity';
 import { SocialProfileEntity } from '@app/entities/SocialProfileEntity';
 import JwtService from '@app/services/JwtService';
 import { DbLogger } from '@app/utils/loggers';
@@ -17,6 +18,9 @@ export class UserEntity extends AppEntity {
 
     @OneToMany(() => SocialProfileEntity, profile => profile.user)
     social_profiles!: Relation<SocialProfileEntity[]>;
+
+    @OneToMany(() => ClientEntity, client => client.user)
+    clients!: Relation<ClientEntity[]>;
 
     static async fromJwtToken(token: string): Promise<UserEntity | boolean> {
         try {

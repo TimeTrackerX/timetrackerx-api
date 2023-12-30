@@ -2,7 +2,7 @@ import { Request } from 'express';
 import { BaseEntity, FindManyOptions, FindOptionsOrder } from 'typeorm';
 import { FindOneOptions } from 'typeorm/find-options/FindOneOptions';
 
-export type FindPaginatedParams<T> = {
+export type PaginatedFindOptions<T> = {
     limit?: number;
     page?: number;
 } & FindOneOptions<T>;
@@ -26,7 +26,7 @@ export abstract class PaginationAware extends BaseEntity {
         this: {
             new (): T;
         } & typeof BaseEntity,
-        params: FindPaginatedParams<T>,
+        params: PaginatedFindOptions<T>,
     ): Promise<PaginatedItems<T>> {
         const page = Math.abs(params.page || 1);
         const limit = Math.abs(params.limit || 10);
@@ -53,7 +53,7 @@ export abstract class PaginationAware extends BaseEntity {
     static findPaginatedFromRequest<T extends PaginationAware>(
         this: { new (): T } & typeof PaginationAware,
         req: Request,
-        params: FindPaginatedParams<T> = {},
+        params: PaginatedFindOptions<T> = {},
     ): Promise<PaginatedItems<T>> {
         const page = Number(req.query.page || 1);
         const limit = Number(req.query.limit || 10);
