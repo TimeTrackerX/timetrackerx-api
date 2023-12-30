@@ -4,15 +4,16 @@ import { ClientEntity } from '@app/entities/ClientEntity';
 import { TaskEntity } from '@app/entities/TaskEntity';
 import { TimeLogEntity } from '@app/entities/TimeLogEntity';
 import { UserEntity } from '@app/entities/UserEntity';
+import { formatDistanceStrict } from 'date-fns';
 import { Column, Entity, Index, JoinColumn, ManyToOne, OneToMany, Raw, Relation, Unique } from 'typeorm';
 
 @Entity('date_logs')
 @Unique('user-client-date', ['user_id', 'client_id', 'date_logged'])
 export class DateLogEntity extends UserOwnedEntity {
     @Column({ nullable: false, type: 'date' })
-    date_logged!: Date;
+    date_logged!: Date | string;
 
-    @Column({ nullable: false, type: 'tinyint', default: 0, unsigned: true })
+    @Column({ nullable: false, type: 'decimal', precision: 5, scale: 2, default: 0, unsigned: true })
     total_hours!: number;
 
     @MoneyColumn()
@@ -39,7 +40,7 @@ export class DateLogEntity extends UserOwnedEntity {
     client_id!: number;
 
     @OneToMany(() => TimeLogEntity, time_log => time_log.date_log, {
-        eager: true,
+        eager: false,
     })
     time_logs!: Relation<TimeLogEntity[]>;
 
@@ -62,12 +63,39 @@ export class DateLogEntity extends UserOwnedEntity {
             user_id,
             date_logged: Raw(alias => `${alias} = :date`, { date: dateOnly }),
         };
-
         const partial = {
             client_id,
             user_id,
-            date_logged: date,
+            date_logged: dateOnly,
         };
         return await this.findOrCreate<DateLogEntity>(lookUp, partial);
+    }
+
+    static async updateTotals(id: number) {
+        const dateLog = await this.findOneOrFail({
+            where: { id },
+            relations: ['client', 'time_logs'],
+        });
+        const totalMinutes = dateLog.time_logs
+            .map(({ clock_in, clock_out }) => {
+                if (!!clock_in && !!clock_out) {
+                    const clockInDateTime = new Date(`${dateLog.date_logged} ${clock_in}`);
+                    const clockOutDateTime = new Date(`${dateLog.date_logged} ${clock_out}`);
+                    const minutesString = formatDistanceStrict(clockInDateTime, clockOutDateTime, {
+                        unit: 'minute',
+                        addSuffix: false,
+                        roundingMethod: 'ceil',
+                    });
+
+                    const [minutes, suffix] = minutesString.split(' ');
+                    return Number(minutes);
+                }
+            })
+            .reduce<number>((previousValue, currentValue) => {
+                return previousValue + Number(currentValue);
+            }, 0);
+        dateLog.total_hours = totalMinutes / 60;
+        dateLog.total_billable = Number(dateLog.client.hourly_rate) * dateLog.total_hours;
+        await dateLog.save();
     }
 }

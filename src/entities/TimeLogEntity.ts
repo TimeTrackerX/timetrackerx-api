@@ -2,7 +2,7 @@ import { UserOwnedEntity } from '@app/database/core/UserOwnedEntity';
 import { ClientEntity } from '@app/entities/ClientEntity';
 import { DateLogEntity } from '@app/entities/DateLogEntity';
 import { UserEntity } from '@app/entities/UserEntity';
-import { Column, Entity, JoinColumn, ManyToOne, Relation } from 'typeorm';
+import { AfterInsert, Column, Entity, JoinColumn, ManyToOne, Relation } from 'typeorm';
 
 @Entity('time_logs')
 export class TimeLogEntity extends UserOwnedEntity {
@@ -30,4 +30,9 @@ export class TimeLogEntity extends UserOwnedEntity {
 
     @Column({ type: 'int', unsigned: true, nullable: false })
     date_log_id!: number;
+
+    @AfterInsert()
+    async afterInsert() {
+        await DateLogEntity.updateTotals(this.date_log_id);
+    }
 }
