@@ -4,7 +4,6 @@ import { ClientEntity } from '@app/entities/ClientEntity';
 import { TaskEntity } from '@app/entities/TaskEntity';
 import { TimeLogEntity } from '@app/entities/TimeLogEntity';
 import { UserEntity } from '@app/entities/UserEntity';
-import { formatDistanceStrict, parseISO } from 'date-fns';
 import { Column, Entity, Index, JoinColumn, ManyToOne, OneToMany, Raw, Relation, Unique } from 'typeorm';
 
 @Entity('date_logs')
@@ -68,7 +67,9 @@ export class DateLogEntity extends UserOwnedEntity {
             user_id,
             date_logged: dateOnly,
         };
-        return await this.findOrCreate<DateLogEntity>(lookUp, partial);
+        return await this.findOrCreate<DateLogEntity>(lookUp, partial, {
+            relations: ['time_logs'],
+        });
     }
 
     static async updateTotals(id: number) {
@@ -76,25 +77,12 @@ export class DateLogEntity extends UserOwnedEntity {
             where: { id },
             relations: ['client', 'time_logs'],
         });
-        const totalMinutes = dateLog.time_logs
-            .map(({ clock_in, clock_out }) => {
-                if (!!clock_in && !!clock_out) {
-                    const clockInDateTime = parseISO(`${dateLog.date_logged}T${clock_in}`);
-                    const clockOutDateTime = parseISO(`${dateLog.date_logged}T${clock_out}`);
-
-                    const minutesString = formatDistanceStrict(clockInDateTime, clockOutDateTime, {
-                        unit: 'minute',
-                        addSuffix: false,
-                        roundingMethod: 'ceil',
-                    });
-
-                    const [minutes, suffix] = minutesString.split(' ');
-                    return Number(minutes);
-                }
-            })
-            .reduce<number>((previousValue, currentValue) => {
-                return previousValue + Number(currentValue);
-            }, 0);
+        let totalMinutes = 0;
+        dateLog.time_logs.forEach(({ timeDiffMinutes }) => {
+            if (timeDiffMinutes) {
+                totalMinutes = totalMinutes + timeDiffMinutes;
+            }
+        });
         dateLog.total_hours = totalMinutes / 60;
         dateLog.total_billable = Number(dateLog.client.hourly_rate) * dateLog.total_hours;
         await dateLog.save();
