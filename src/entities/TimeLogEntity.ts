@@ -2,7 +2,8 @@ import { UserOwnedEntity } from '@app/database/core/UserOwnedEntity';
 import { ClientEntity } from '@app/entities/ClientEntity';
 import { DateLogEntity } from '@app/entities/DateLogEntity';
 import { UserEntity } from '@app/entities/UserEntity';
-import { AfterInsert, Column, Entity, JoinColumn, ManyToOne, Relation } from 'typeorm';
+import { timeStringToDate } from '@app/utils/timeStringToDate';
+import { AfterInsert, AfterLoad, Column, Entity, JoinColumn, ManyToOne, Relation } from 'typeorm';
 
 @Entity('time_logs')
 export class TimeLogEntity extends UserOwnedEntity {
@@ -30,6 +31,19 @@ export class TimeLogEntity extends UserOwnedEntity {
 
     @Column({ type: 'int', unsigned: true, nullable: false })
     date_log_id!: number;
+
+    timeDiffMinutes: number | null = null;
+
+    @AfterLoad()
+    setTimeDiffMinutes() {
+        if (!this.clock_out) {
+            this.timeDiffMinutes = null;
+        } else {
+            const timeIn = timeStringToDate(String(this.clock_in)).getTime();
+            const timeOut = timeStringToDate(String(this.clock_out)).getTime();
+            this.timeDiffMinutes = Math.ceil(Number(((timeOut - timeIn) / 1000 / 60).toFixed(2)));
+        }
+    }
 
     @AfterInsert()
     async afterInsert() {
