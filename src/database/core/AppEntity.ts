@@ -8,6 +8,7 @@ import {
     UpdateDateColumn,
 } from 'typeorm';
 import { DeepPartial } from 'typeorm/common/DeepPartial';
+import { FindOneOptions } from 'typeorm/find-options/FindOneOptions';
 import { FindOptionsWhere } from 'typeorm/find-options/FindOptionsWhere';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { UpsertOptions } from 'typeorm/repository/UpsertOptions';
@@ -51,11 +52,17 @@ export abstract class AppEntity extends PaginationAware {
         this: { new (): T } & typeof BaseEntity,
         where: FindOptionsWhere<T>,
         entityLike?: DeepPartial<T>,
+        options?: FindOneOptions<T>,
     ): Promise<T> {
-        const found = await this.findOneBy<T>(where);
+        const findOneOptions: FindOneOptions<T> = {
+            where,
+            ...options,
+        };
+        const found = await this.findOne<T>(findOneOptions);
         if (found) {
             return found;
         }
+
         const created = this.create<T>(entityLike || (where as DeepPartial<T>));
         await created.save();
         return created;
