@@ -1,5 +1,6 @@
 import appConfig from '@app/config';
 import { UserEntity } from '@app/entities/UserEntity';
+import { ExpiredTokenError } from '@app/server/ExpiredTokenError';
 import { AppLogger } from '@app/utils/loggers';
 import jwt, { Algorithm } from 'jsonwebtoken';
 
@@ -28,5 +29,20 @@ const toUser = async (token: string): Promise<UserEntity | null> => {
         return null;
     }
 };
-const JwtService = { fromUser, toUser };
+const isValid = (token?: string | null): boolean => {
+    if (!token) {
+        return false;
+    }
+    try {
+        jwt.verify(token, appConfig.auth.jwtSecret, { algorithms: [ALGO] });
+        return true;
+    } catch (e) {
+        const error = e as Error;
+        if (error.name === 'TokenExpiredError') {
+            throw new ExpiredTokenError();
+        }
+        return false;
+    }
+};
+const JwtService = { fromUser, toUser, isValid };
 export default JwtService;

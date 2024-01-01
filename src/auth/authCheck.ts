@@ -1,5 +1,6 @@
 import appConfig from '@app/config';
 import { UserEntity } from '@app/entities/UserEntity';
+import JwtService from '@app/services/JwtService';
 import Env from '@app/utils/Env';
 import { Action } from 'routing-controllers';
 import { AuthorizationChecker } from 'routing-controllers/types/AuthorizationChecker';
@@ -23,11 +24,16 @@ const getUserFromToken = (token: string): Promise<UserEntity | boolean> => {
 
 export const currentUserChecker: CurrentUserChecker = async (action: Action) => {
     const token = getTokenFromAction(action);
-
-    return token ? await getUserFromToken(token) : null;
+    if (!token) {
+        return null;
+    }
+    return JwtService.isValid(token) ? await getUserFromToken(token) : null;
 };
 
 export const authorizationChecker: AuthorizationChecker = async (action: Action, roles: string[]) => {
     const token = getTokenFromAction(action);
-    return token ? !!(await getUserFromToken(token)) : false;
+    if (!token) {
+        return false;
+    }
+    return JwtService.isValid(token) ? !!(await getUserFromToken(token)) : false;
 };
