@@ -22,7 +22,7 @@ export const databaseConfig: MysqlConnectionOptions = {
     entities: [entitiesPath],
     synchronize: Env.asBoolean('DATABASE_SYNC', false),
     logging: Env.asBoolean('DATABASE_LOG', false),
-    logger: new CustomLogger(),
+    logger: new CustomLogger(Env.asBoolean('DATABASE_LOG', false)),
     cache: {
         type: 'database',
         tableName: 'tbl_caches',
