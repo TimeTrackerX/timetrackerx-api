@@ -37,9 +37,11 @@ export class UserEntity extends AppEntity {
 
     toJwtResponse() {
         const token = JwtService.fromUser(this);
+        const refreshToken = JwtService.createRefreshToken(token);
 
         return {
             token,
+            refreshToken,
             user: {
                 id: this.id,
                 name: this.name,
