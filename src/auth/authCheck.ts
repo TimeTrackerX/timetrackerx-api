@@ -5,6 +5,7 @@ import Env from '@app/utils/Env';
 import { Action } from 'routing-controllers';
 import { AuthorizationChecker } from 'routing-controllers/types/AuthorizationChecker';
 import { CurrentUserChecker } from 'routing-controllers/types/CurrentUserChecker';
+export const TEST_TOKEN = 'TEST_TOKEN';
 
 const getTokenFromAction = (action: Action): string | null => {
     const authorizationHeader: string | undefined = action.request.headers['authorization'];
@@ -15,7 +16,7 @@ const getTokenFromAction = (action: Action): string | null => {
 };
 
 const getUserFromToken = (token: string): Promise<UserEntity | boolean> => {
-    if (Env.isDev() && token === 'TEST_TOKEN') {
+    if (Env.isDev() && token === TEST_TOKEN) {
         return UserEntity.findOneByOrFail({ email: appConfig.auth.testUserEmail });
     }
 
